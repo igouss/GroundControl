@@ -43,19 +43,50 @@
 #include "thrift/Protocol.h"
 #include "thrift/SerialTransport.h"
 
-int main(int argc, char *argv[])
-{
+
+uint32_t readAccelerometer(naxsoft::Protocol* protocol, int16_t& x, int16_t& y, int16_t& z) {
+	uint32_t rz = 0;
+	rz += protocol->writeMessageBegin(naxsoft::T_CALL);
+	rz += protocol->writeI8(0x5); // ACCELE;
+	rz += protocol->writeMessageEnd();
+
+	enum naxsoft::TMessageType messageType;
+
+	rz += protocol->readMessageBegin(messageType);
+
+	if(!naxsoft::T_REPLY) {
+		printf("Wrong reply type %d", messageType);
+		x = -1;
+		y = -1;
+		z = -1;
+	} else {
+		rz += protocol->readI16(x);
+		rz += protocol->readI16(y);
+		rz += protocol->readI16(z);
+		rz += protocol->readMessageEnd();
+	}
+	return rz;
+}
+
+int main(int argc, char *argv[]) {
 	naxsoft::SerialTransport transport("/dev/cu.usbserial-A70041iS", B9600);
 	transport.open();
+
+	if(!transport.isOpen()) {
+		exit(EXIT_FAILURE);
+	}
+
 	naxsoft::Protocol protocol(&transport);
 
-	enum naxsoft::TMessageType type = naxsoft::T_ONEWAY;
-	protocol.writeMessageBegin(type); // 04 04 01 80
-	protocol.writeI8(0x04); // TLC
-	protocol.writeI8(0x01); // CH
-	protocol.writeI8(0x80); // PWM
-	protocol.writeMessageEnd();
-	transport.flush();
-	transport.close();
+	int16_t x, y, z = 0;
+
+	uint32_t rz = 0;
+	for(int i =0; i<500; i++) {
+		rz = readAccelerometer(&protocol, x, y, z);
+		printf("[%d][%d] accelerometer %d %d %d\n", i, rz, x, y, z);
+	}
 	exit(EXIT_SUCCESS);
 } // end main
+
+
+

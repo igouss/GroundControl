@@ -66,7 +66,7 @@ public:
 	 * @return How many bytes were actually read
 	 * @throws TTransportException If an error occurs
 	 */
-	uint32_t read(uint8_t* buf, uint32_t len) const;
+	int32_t read(uint8_t* buf, uint32_t len) const;
 
 	/**
 	 * Called when read is completed.
@@ -87,7 +87,7 @@ public:
 	 * @param len   How many bytes to read
 	 * @return How many bytes read, which must be equal to size, non-positive if insufficient data was read
 	 */
-	uint32_t readAll(uint8_t* buf, uint32_t len) const;
+	int32_t readAll(uint8_t* buf, uint32_t len) const;
 
 	/**
 	 * Writes the string in its entirety to the buffer.
@@ -110,7 +110,7 @@ public:
 	 *
 	 * @return number of bytes written if available, 0 otherwise
 	 */
-	uint32_t writeEnd() {
+	int32_t writeEnd() {
 		// default behaviour is to do nothing
 		return 0;
 	}
@@ -120,8 +120,8 @@ private:
 	const char* serialport;
 	int fd;
 	char buf[256];
-	boost::fdistream* inStream;
-	boost::fdostream* outStream;
+	boost::FdIStream* inStream;
+	boost::FdOStream* outStream;
 
 	int serialport_init(const char* serialport, int baud);
 };

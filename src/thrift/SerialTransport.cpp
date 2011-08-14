@@ -1,3 +1,9 @@
+#include <iostream>
+#include <streambuf>
+
+#include <locale>
+#include <cstdio>
+
 #include <stdio.h>    /* Standard input/output definitions */
 #include <stdlib.h>
 #include <stdint.h>   /* Standard types */
@@ -26,8 +32,8 @@ SerialTransport::~SerialTransport() {
 
 void SerialTransport::open(void) {
 	fd = serialport_init(serialport, baudrate);
-	this->outStream = new boost::fdostream(fd);
-	this->inStream = new boost::fdistream(fd);
+	this->outStream = new boost::FdOStream(fd);
+	this->inStream = new boost::FdIStream(fd);
 
 }
 
@@ -52,27 +58,36 @@ bool SerialTransport::peek() const {
 	return inStream->peek();
 }
 
-uint32_t SerialTransport::read(uint8_t* buf, uint32_t len) const {
-	uint32_t i = 0;
-	i = inStream->readsome((char*) buf, len);
-	return i;
+int32_t SerialTransport::read(uint8_t* buf, uint32_t len) const {
+	// basically readAll will busy-wait
+	// if last time we tried to read and failed to read data from the wire.
+	if(!inStream->good() || inStream->eof()) {
+		inStream->clear();
+		return 0;
+	}
+
+	inStream->read((char*) buf, len); // todo unblocking call
+	len = inStream->gcount();
+	return len;
 }
 
 void SerialTransport::write(const uint8_t* buf, uint32_t len) const {
 	outStream->write((char*) buf, len);
 }
 
-uint32_t SerialTransport::readAll(uint8_t* buf, uint32_t len) const {
+int32_t SerialTransport::readAll(uint8_t* buf, uint32_t len) const {
 	uint32_t have = 0;
-	uint32_t get = 0;
+	int32_t get = 0;
 
 	while (have < len) {
 		get = read(buf + have, len - have);
+//		if(get < 0) {
+//			get = 0;
+//			// return get;
+//		}
 		have += get;
 	}
 
-	//  Serial.print("readAll have: ");
-	//  Serial.println(have);
 	return have;
 }
 

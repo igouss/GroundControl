@@ -57,126 +57,100 @@ namespace boost {
  ************************************************************/
 
 
-class fdoutbuf : public std::streambuf {
-  protected:
-    int fd;    // file descriptor
+// For reference see Josuttis, "The C++ Standard Library", 13.13.3.
+//   Note the casts to unsigned char, and the explicit constructors.
+//   Josuttis erroneously omits them.
+
+class FdOutBuf : public std::streambuf
+{
   public:
-    // constructor
-    fdoutbuf (int _fd) : fd(_fd) {
-    }
+    explicit FdOutBuf(int d)
+      : fd(d)
+      { this->setp(this->buf, this->buf+(size-1)); }
+
+    ~FdOutBuf() { this->sync(); }
   protected:
-    // write one character
-    virtual int_type overflow (int_type c) {
-        if (c != EOF) {
-            char z = c;
-            if (write (fd, &z, 1) != 1) {
-                return EOF;
-            }
-        }
-        return c;
-    }
-    // write multiple characters
-    virtual
-    std::streamsize xsputn (const char* s,
-                            std::streamsize num) {
-        return write(fd,s,num);
-    }
-};
-
-class fdostream : public std::ostream {
-  protected:
-    fdoutbuf buf;
-  public:
-    fdostream (int fd) : std::ostream(0), buf(fd) {
-        rdbuf(&buf);
-    }
-};
-
-
-/************************************************************
- * fdistream
- * - a stream that reads on a file descriptor
- ************************************************************/
-
-class fdinbuf : public std::streambuf {
-  protected:
-    int fd;    // file descriptor
-  protected:
-    /* data buffer:
-     * - at most, pbSize characters in putback area plus
-     * - at most, bufSize characters in ordinary read buffer
-     */
-    static const int pbSize = 4;        // size of putback area
-    static const int bufSize = 1024;    // size of the data buffer
-    char buffer[bufSize+pbSize];        // data buffer
-
-  public:
-    /* constructor
-     * - initialize file descriptor
-     * - initialize empty data buffer
-     * - no putback area
-     * => force underflow()
-     */
-    fdinbuf (int _fd) : fd(_fd) {
-        setg (buffer+pbSize,     // beginning of putback area
-              buffer+pbSize,     // read position
-              buffer+pbSize);    // end position
-    }
-
-  protected:
-    // insert new characters into the buffer
-    virtual int_type underflow () {
-#ifndef _MSC_VER
-        using std::memmove;
-#endif
-
-        // is read position before end of buffer?
-        if (gptr() < egptr()) {
-            return traits_type::to_int_type(*gptr());
-        }
-
-        /* process size of putback area
-         * - use number of characters read
-         * - but at most size of putback area
-         */
-        int numPutback;
-        numPutback = gptr() - eback();
-        if (numPutback > pbSize) {
-            numPutback = pbSize;
-        }
-
-        /* copy up to pbSize characters previously read into
-         * the putback area
-         */
-        memmove (buffer+(pbSize-numPutback), gptr()-numPutback,
-                numPutback);
-
-        // read at most bufSize new characters
-        int num;
-        num = read (fd, buffer+pbSize, bufSize);
-        if (num <= 0) {
-            // ERROR or EOF
+    virtual int overflow(int ic)
+    {
+      if (ic != EOF) {
+        // Double check that there is room for a character, otherwise
+        // assume a previous I/O output failed, in which case just
+        // returning a failure now is appropriate.
+        if (pptr() >= &buf[size])
             return EOF;
-        }
-
-        // reset buffer pointers
-        setg (buffer+(pbSize-numPutback),   // beginning of putback area
-              buffer+pbSize,                // read position
-              buffer+pbSize+num);           // end of buffer
-
-        // return next character
-        return traits_type::to_int_type(*gptr());
+        *this->pptr() = char(ic);
+        this->pbump(1);
+      }
+      if (sync() < 0)
+        return EOF;
+      return ic;
     }
+
+    virtual int sync()
+    {
+      char const*  p = this->pbase();
+      int  n = this->pptr() - p;
+      while (n) {
+         int  done = ::write(fd, p, n);
+         if (done < 0)
+           return -1;
+         n -= done;
+         p += done;
+      }
+      this->pbump(-(p - this->pbase()));
+      return 0;
+    }
+
+  private:
+    enum { size = 1 << 13 } ; // 8192
+    int fd;
+    char buf[size];
 };
 
-class fdistream : public std::istream {
-  protected:
-    fdinbuf buf;
+class FdOStream : public std::ostream
+{
   public:
-    fdistream (int fd) : std::istream(0), buf(fd) {
-        rdbuf(&buf);
-    }
+    explicit FdOStream(int fd) : std::ostream(&buf), buf(fd) {}
+  private:
+    FdOutBuf buf;
 };
+
+
+class FdInBuf : public std::streambuf
+{
+  public:
+    explicit FdInBuf(int d)
+      : fd(d) { this->setg(this->buf+size, this->buf+size, this->buf+size); }
+
+    virtual int underflow()
+    {
+      if (this->gptr() < this->egptr()) {
+        return (unsigned char) *this->gptr();
+      }
+      bool  pb = (this->gptr() - this->eback()) != 0;
+      if (pb) this->buf[0] = this->gptr()[-1];
+      int  got = ::read(this->fd, this->buf+1, this->size-1);
+      if (got <= 0) {
+        return EOF;
+      }
+      this->setg(buf+(1-pb), buf+1, buf+1+got);
+      return (unsigned char) *this->gptr();
+    }
+
+  private:
+    enum { size = 1 << 13 } ; // 8192
+    int fd;
+    char buf[size];
+};
+
+class FdIStream : public std::istream
+{
+  public:
+    explicit FdIStream(int fd) : std::istream(&buf), buf(fd) {}
+  private:
+    FdInBuf buf;
+};
+
 
 
 } // END namespace boost

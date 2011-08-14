@@ -13,115 +13,116 @@ namespace naxsoft {
     /**
      * Writing functions.
      */
-    uint32_t Protocol::writeMessageBegin(/*const char* name, */ const TMessageType messageType /*, const int32_t seqid*/) const {
-        uint32_t wsize = 0;
+    int32_t Protocol::writeMessageBegin(/*const char* name, */ const TMessageType messageType /*, const int32_t seqid*/) const {
+        int32_t wsize = 0;
     //    wsize += writeString(name);
         wsize += writeI8((int8_t)messageType);
     //    wsize += writeI32(seqid);
         return wsize;
     }
 
-    uint32_t Protocol::writeMessageEnd() const {
-      return 0;
+    int32_t Protocol::writeMessageEnd() const {
+    	this->trans_->flush();
+    	return 0;
     }
 
 
-    uint32_t Protocol::writeStructBegin(const char* name) const {
+    int32_t Protocol::writeStructBegin(const char* name) const {
       (void) name;
       return 0;
     }
 
-    uint32_t Protocol::writeStructEnd() const {
+    int32_t Protocol::writeStructEnd() const {
       return 0;
     }
 
-    uint32_t Protocol::writeFieldBegin(const char* name,
+    int32_t Protocol::writeFieldBegin(const char* name,
                              const TType fieldType,
                              const int16_t fieldId) const {
       (void) name;
-      uint32_t wsize = 0;
+      int32_t wsize = 0;
       wsize += writeI8((int8_t)fieldType);
       wsize += writeI16(fieldId);
       return wsize;
     }
 
-    uint32_t Protocol::writeFieldEnd() const {
+    int32_t Protocol::writeFieldEnd() const {
      return 0;
     }
 
-    uint32_t Protocol::writeFieldStop() const {
+    int32_t Protocol::writeFieldStop() const {
       return writeI8((int8_t)T_STOP);
     }
 
-    uint32_t Protocol::writeMapBegin(const TType keyType,
+    int32_t Protocol::writeMapBegin(const TType keyType,
                            const TType valType,
                            const uint32_t size) const {
-      uint32_t wsize = 0;
+      int32_t wsize = 0;
       wsize += writeI8((int8_t)keyType);
       wsize += writeI8((int8_t)valType);
       wsize += writeI32((int32_t)size);
       return wsize;
     }
 
-    uint32_t Protocol::writeMapEnd() const {
+    int32_t Protocol::writeMapEnd() const {
       return 0;
     }
 
-    uint32_t Protocol::writeListBegin(const TType elemType, const uint32_t size) const {
-      uint32_t wsize = 0;
+    int32_t Protocol::writeListBegin(const TType elemType, const uint32_t size) const {
+      int32_t wsize = 0;
       wsize += writeI8((int8_t) elemType);
       wsize += writeI32((int32_t)size);
       return wsize;
     }
 
-    uint32_t Protocol::writeListEnd() const {
+    int32_t Protocol::writeListEnd() const {
       return 0;
     }
 
-    uint32_t Protocol::writeSetBegin(const TType elemType, const uint32_t size) const {
-      uint32_t wsize = 0;
+    int32_t Protocol::writeSetBegin(const TType elemType, const uint32_t size) const {
+      int32_t wsize = 0;
       wsize += writeI8((int8_t)elemType);
       wsize += writeI32((int32_t)size);
       return wsize;
     }
 
-    uint32_t Protocol::writeSetEnd() const {
+    int32_t Protocol::writeSetEnd() const {
       return 0;
     }
 
-    uint32_t Protocol::writeBool(const bool value) const {
+    int32_t Protocol::writeBool(const bool value) const {
       uint8_t tmp =  value ? 1 : 0;
       this->trans_->write(&tmp, 1);
       return 1;
     }
 
-    uint32_t Protocol::writeI8(const int8_t byte) const {
+    int32_t Protocol::writeI8(const int8_t byte) const {
       this->trans_->write((uint8_t*)&byte, 1);
       return 1;
     }
 
-    uint32_t Protocol::writeI16(const int16_t i16) const {
+    int32_t Protocol::writeI16(const int16_t i16) const {
     //  int16_t net = (int16_t)htons(i16);
       int16_t net = i16;
       this->trans_->write((uint8_t*)&net, 2);
       return 2;
     }
 
-    uint32_t Protocol::writeI32(const int32_t i32) const {
+    int32_t Protocol::writeI32(const int32_t i32) const {
     //  int32_t net = (int32_t)htonl(i32);
       int32_t net = i32;
       this->trans_->write((uint8_t*)&net, 4);
       return 4;
     }
 
-    uint32_t Protocol::writeI64(const int64_t i64) const {
+    int32_t Protocol::writeI64(const int64_t i64) const {
     //  int64_t net = (int64_t)htonll(i64);
       int64_t net = i64;
       this->trans_->write((uint8_t*)&net, 8);
       return 8;
     }
 
-    uint32_t Protocol::writeFloat(const float dub) const {
+    int32_t Protocol::writeFloat(const float dub) const {
     //  assert(sizeof(double) == sizeof(uint64_t));
     //  assert(std::numeric_limits<double>::is_iec559);
     //  uint64_t bits = bitwise_cast<uint64_t>(dub);
@@ -133,17 +134,17 @@ namespace naxsoft {
       return 4;
     }
 
-    uint32_t Protocol::writeString(const char* str) const {
+    int32_t Protocol::writeString(const char* str) const {
       uint32_t size = strlen(str);
-      uint32_t result = writeI32((int32_t)size);
+      int32_t result = writeI32((int32_t)size);
       if (size > 0) {
         this->trans_->write((uint8_t*)str, size);
       }
       return result + size;
     }
 
-    uint32_t Protocol::writeBinary(const char* str, const uint32_t size) const {
-      uint32_t result = writeI32((int32_t)size);
+    int32_t Protocol::writeBinary(const char* str, const uint32_t size) const {
+      int32_t result = writeI32((int32_t)size);
       if (size > 0) {
         this->trans_->write((uint8_t*)str, size);
       }
@@ -153,10 +154,10 @@ namespace naxsoft {
     /**
      * Reading functions
      */
-    uint32_t Protocol::readMessageBegin(/*char* name,*/
+    int32_t Protocol::readMessageBegin(/*char* name,*/
                               TMessageType& messageType
                               /*, int32_t& seqid*/) const {
-      uint32_t result = 0;
+      int32_t result = 0;
       int8_t type;
 
     //  int32_t sz;
@@ -176,24 +177,24 @@ namespace naxsoft {
       return result;
     }
 
-    uint32_t Protocol::readMessageEnd() const {
+    int32_t Protocol::readMessageEnd() const {
       return 0;
     }
 
-    uint32_t Protocol::readStructBegin(char* name) const {
+    int32_t Protocol::readStructBegin(char* name) const {
       *name = '\0';
       return 0;
     }
 
-    uint32_t Protocol::readStructEnd() const {
+    int32_t Protocol::readStructEnd() const {
       return 0;
     }
 
-    uint32_t Protocol::readFieldBegin(char* name,
+    int32_t Protocol::readFieldBegin(char* name,
                             TType& fieldType,
                             int16_t& fieldId) const {
       (void) name;
-      uint32_t result = 0;
+      int32_t result = 0;
       int8_t type;
       result += readI8(type);
       fieldType = (TType)type;
@@ -206,14 +207,14 @@ namespace naxsoft {
 
     }
 
-    uint32_t Protocol::readFieldEnd() const {
+    int32_t Protocol::readFieldEnd() const {
       return 0;
     }
 
-    uint32_t Protocol::readMapBegin(TType& keyType, TType& valType, uint32_t& size) const {
+    int32_t Protocol::readMapBegin(TType& keyType, TType& valType, uint32_t& size) const {
 
       int8_t k, v;
-      uint32_t result = 0;
+      int32_t result = 0;
       int32_t sizei;
       result += readI8(k);
       keyType = (TType)k;
@@ -229,13 +230,13 @@ namespace naxsoft {
       return result;
     }
 
-    uint32_t Protocol::readMapEnd() const {
+    int32_t Protocol::readMapEnd() const {
      return 0;
     }
 
-    uint32_t Protocol::readListBegin(TType& elemType, uint32_t& size) const {
+    int32_t Protocol::readListBegin(TType& elemType, uint32_t& size) const {
       int8_t e;
-      uint32_t result = 0;
+      int32_t result = 0;
       int32_t sizei;
       result += readI8(e);
       elemType = (TType)e;
@@ -249,16 +250,16 @@ namespace naxsoft {
       return result;
     }
 
-    uint32_t Protocol::readListEnd() const {
+    int32_t Protocol::readListEnd() const {
       return 0;
     }
 
-    uint32_t Protocol::readSetBegin(TType& elemType, uint32_t& size) const {
+    int32_t Protocol::readSetBegin(TType& elemType, uint32_t& size) const {
 
     //  Serial.println("start readSetBegin");
 
       int8_t e;
-      uint32_t result = 0;
+      int32_t result = 0;
       int32_t sizei;
       result += readI8(e);
       elemType = (TType)e;
@@ -275,70 +276,87 @@ namespace naxsoft {
       return result;
     }
 
-    uint32_t Protocol::readSetEnd() const {
+    int32_t Protocol::readSetEnd() const {
        return 0;
     }
 
-    uint32_t Protocol::readBool(bool& value) const {
+    int32_t Protocol::readBool(bool& value) const {
       uint8_t b[1];
-      this->trans_->readAll(b, 1);
+      int32_t result = 0;
+      result = this->trans_->readAll(b, 1);
       value = *(int8_t*)b != 0;
-      return 1;
+      return result;
+//      return 1;
     }
 
-    uint32_t Protocol::readI8(int8_t& val) const {
+    int32_t Protocol::readI8(int8_t& val) const {
       uint8_t b[1];
-      this->trans_->readAll(b, 1);
+      int32_t result = 0;
+
+      result = this->trans_->readAll(b, 1);
       val = *(int8_t*)b;
 
     //  Serial.print("readI8 val = ");
     // Serial.println(val);
 
-      return 1;
+//      return 1;
+      return result;
     }
 
-    uint32_t Protocol::readI16(int16_t& i16) const {
+    int32_t Protocol::readI16(int16_t& i16) const {
      uint8_t b[2];
-     this->trans_->readAll(b, 2);
+     int32_t result = 0;
+
+     result = this->trans_->readAll(b, 2);
      i16 =  *(int16_t*)b;
-     return 2;
+     // return 2;
+     return result;
     }
 
-    uint32_t Protocol::readI32(int32_t& i32) const {
+    int32_t Protocol::readI32(int32_t& i32) const {
      uint8_t b[4];
-     this->trans_->readAll(b, 4);
+     int32_t result = 0;
+
+     result = this->trans_->readAll(b, 4);
      i32 =  *(int32_t*)b;
-     return 4;
+     return result;
+     //return 4;
     }
 
-    uint32_t Protocol::readI64(int64_t& i64) const {
+    int32_t Protocol::readI64(int64_t& i64) const {
      uint8_t b[8];
-     this->trans_->readAll(b, 8);
+     int32_t result = 0;
+
+     result = this->trans_->readAll(b, 8);
      i64 =  *(int32_t*)b;
-     return 8;
+//     return 8;
+     return result;
     }
 
-    uint32_t Protocol::readFloat(float& dub) const {
+    int32_t Protocol::readFloat(float& dub) const {
      uint8_t b[4];
-     this->trans_->readAll(b, 4);
+     int32_t result = 0;
+
+     result = this->trans_->readAll(b, 4);
      dub =  *(float*)b;
-     return 4;
+//     return 4;
+     return result;
     }
 
-    uint32_t Protocol::readString(char* str) const {
-      uint32_t result;
+    int32_t Protocol::readString(char* str) const {
+      int32_t result;
       int32_t size;
       result = readI32(size);
       return result + readStringBody(str, size);
     }
 
-    uint32_t Protocol::readBinary(char* str) const {
+    int32_t Protocol::readBinary(char* str) const {
       return this->readString(str);
     }
 
 
-    uint32_t Protocol::readStringBody(char* str, int32_t size) const {
-      uint32_t result = 0;
+    int32_t Protocol::readStringBody(char* str, int32_t size) const {
+      int32_t result = 0;
 
       if(size > 0) {
          str = (char*) malloc(size);
@@ -351,7 +369,7 @@ namespace naxsoft {
     /**
      * Method to arbitrarily skip over data.
      */
-    uint32_t Protocol::skip(TType type) const {
+    int32_t Protocol::skip(TType type) const {
 
       switch (type) {
       case T_BOOL:
@@ -396,7 +414,7 @@ namespace naxsoft {
         }
       case T_STRUCT:
         {
-          uint32_t result = 0;
+          int32_t result = 0;
           char* name = NULL;
           int16_t fid;
           TType ftype;
@@ -417,7 +435,7 @@ namespace naxsoft {
         }
       case T_MAP:
         {
-          uint32_t result = 0;
+          int32_t result = 0;
           TType keyType;
           TType valType;
           uint32_t i, size;
@@ -431,7 +449,7 @@ namespace naxsoft {
         }
       case T_SET:
         {
-          uint32_t result = 0;
+          int32_t result = 0;
           TType elemType;
           uint32_t i, size;
           result += readSetBegin(elemType, size);
@@ -443,7 +461,7 @@ namespace naxsoft {
         }
       case T_LIST:
         {
-          uint32_t result = 0;
+          int32_t result = 0;
           TType elemType;
           uint32_t i, size;
           result += readListBegin(elemType, size);
