@@ -65,6 +65,61 @@ uint32_t readAccelerometer(naxsoft::Protocol* protocol, int16_t& x, int16_t& y, 
 		rz += protocol->readI16(z);
 		rz += protocol->readMessageEnd();
 	}
+//	x = x >> 4;
+//	y = y >> 4;
+//	z = z >> 4;
+	return rz;
+}
+uint32_t readGyro(naxsoft::Protocol* protocol, int16_t& x, int16_t& y, int16_t& z) {
+	uint32_t rz = 0;
+	rz += protocol->writeMessageBegin(naxsoft::T_CALL);
+	rz += protocol->writeI8(0x7); // 7 = gyroscope
+	rz += protocol->writeMessageEnd();
+
+	enum naxsoft::TMessageType messageType;
+
+	rz += protocol->readMessageBegin(messageType);
+
+	if(!naxsoft::T_REPLY) {
+		printf("Wrong reply type %d", messageType);
+		x = -1;
+		y = -1;
+		z = -1;
+	} else {
+		rz += protocol->readI16(x);
+		rz += protocol->readI16(y);
+		rz += protocol->readI16(z);
+		rz += protocol->readMessageEnd();
+	}
+//	x = x >> 4;
+//	y = y >> 4;
+//	z = z >> 4;
+	return rz;
+}
+uint32_t readMagnetometer(naxsoft::Protocol* protocol, int16_t& x, int16_t& y, int16_t& z) {
+	uint32_t rz = 0;
+	rz += protocol->writeMessageBegin(naxsoft::T_CALL);
+	rz += protocol->writeI8(0x6); // 6=magnetometer
+	rz += protocol->writeMessageEnd();
+
+	enum naxsoft::TMessageType messageType;
+
+	rz += protocol->readMessageBegin(messageType);
+
+	if(!naxsoft::T_REPLY) {
+		printf("Wrong reply type %d", messageType);
+		x = -1;
+		y = -1;
+		z = -1;
+	} else {
+		rz += protocol->readI16(x);
+		rz += protocol->readI16(y);
+		rz += protocol->readI16(z);
+		rz += protocol->readMessageEnd();
+	}
+//	x = x >> 4;
+//	y = y >> 4;
+//	z = z >> 4;
 	return rz;
 }
 
@@ -78,12 +133,22 @@ int main(int argc, char *argv[]) {
 
 	naxsoft::Protocol protocol(&transport);
 
-	int16_t x, y, z = 0;
+	int16_t mx, my, mz = 0;
+	int16_t ax, ay, az = 0;
+	int16_t gx, gy, gz = 0;
 
 	uint32_t rz = 0;
-	for(int i =0; i<500; i++) {
-		rz = readAccelerometer(&protocol, x, y, z);
-		printf("[%d][%d] accelerometer %d %d %d\n", i, rz, x, y, z);
+
+	printf("#mx\tmy\tmz\tax\tay\taz\tgx\tgy\tgz\tms\n");
+
+	int i = 0;
+	for(;;) {
+		i++;
+		rz = readAccelerometer(&protocol, ax, ay, az);
+		rz = readGyro(&protocol, gx, gy, gz);
+		rz = readMagnetometer(&protocol, mx, my, mz);
+		// printf("[%d][%d] accelerometer %d %d %d\n", i, rz, x, y, z);
+		printf("%04d\t%04d\t%04d\t%04d\t%04d\t%04d\t%05d\t%05d\t%05d\t%d\n", mx, my, mz, ax, ay, az, gx, gy, gz, i);
 	}
 	exit(EXIT_SUCCESS);
 } // end main
