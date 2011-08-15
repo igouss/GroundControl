@@ -109,8 +109,14 @@ int SerialTransport::serialport_init(const char* serialport, int baud) {
 		return -1;
 	}
 
+	/*
+	 * Get the attribues associated with the serial port
+	 * See: http://www.opengroup.org/onlinepubs/009695399/functions/tcgetattr.html
+	 */
 	if (tcgetattr(fd, &toptions) < 0) {
 		perror("init_serialport: Couldn't get term attributes");
+		::close(fd);
+		fd = 0;
 		return -1;
 	}
 	speed_t brate = baud; // let you override switch below if needed
@@ -147,6 +153,12 @@ int SerialTransport::serialport_init(const char* serialport, int baud) {
 	cfsetispeed(&toptions, brate);
 	cfsetospeed(&toptions, brate);
 
+
+	/*
+	 * See: http://linux.die.net/man/3/cfmakeraw
+	 * And: http://www.gnu.org/s/libc/manual/html_node/Noncanonical-Input.html
+	 */
+
 	// 8N1
 	toptions.c_cflag &= ~PARENB;
 	toptions.c_cflag &= ~CSTOPB;
@@ -162,15 +174,21 @@ int SerialTransport::serialport_init(const char* serialport, int baud) {
 	toptions.c_oflag &= ~OPOST; // make raw
 
 	// see: http://unixwiz.net/techtips/termios-vmin-vtime.html
-	toptions.c_cc[VMIN] = 0;
-	toptions.c_cc[VTIME] = 20;
+	toptions.c_cc[VMIN] = 0; // specifies the minimum number of bytes that must be available in the input queue in order for read to return.
+	toptions.c_cc[VTIME] = 20; // specifies how long to wait for input before returning, in units of 0.1 seconds.
 
+
+	/*
+	 * Apply the changes to the serial port.
+	 * See: http://www.delorie.com/gnu/docs/glibc/libc_360.html
+	 *
+	 * TCSAFLUSH tells the underlying OS to wait until the all queued output has been written,
+	 * and to discard any queued input
+	 */
 	if (tcsetattr(fd, TCSANOW, &toptions) < 0) {
 		perror("init_serialport: Couldn't set term attributes");
 		return -1;
 	}
-
-//	stream.clear();
 	return fd;
 }
 } // namespace

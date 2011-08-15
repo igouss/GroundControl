@@ -43,87 +43,30 @@
 #include "thrift/Protocol.h"
 #include "thrift/SerialTransport.h"
 
+#include "SensorReader.h"
+#include "DataLogger.h"
+#include "LatLon.h"
 
-uint32_t readAccelerometer(naxsoft::Protocol* protocol, int16_t& x, int16_t& y, int16_t& z) {
-	uint32_t rz = 0;
-	rz += protocol->writeMessageBegin(naxsoft::T_CALL);
-	rz += protocol->writeI8(0x5); // ACCELE;
-	rz += protocol->writeMessageEnd();
 
-	enum naxsoft::TMessageType messageType;
-
-	rz += protocol->readMessageBegin(messageType);
-
-	if(!naxsoft::T_REPLY) {
-		printf("Wrong reply type %d", messageType);
-		x = -1;
-		y = -1;
-		z = -1;
-	} else {
-		rz += protocol->readI16(x);
-		rz += protocol->readI16(y);
-		rz += protocol->readI16(z);
-		rz += protocol->readMessageEnd();
-	}
-//	x = x >> 4;
-//	y = y >> 4;
-//	z = z >> 4;
-	return rz;
-}
-uint32_t readGyro(naxsoft::Protocol* protocol, int16_t& x, int16_t& y, int16_t& z) {
-	uint32_t rz = 0;
-	rz += protocol->writeMessageBegin(naxsoft::T_CALL);
-	rz += protocol->writeI8(0x7); // 7 = gyroscope
-	rz += protocol->writeMessageEnd();
-
-	enum naxsoft::TMessageType messageType;
-
-	rz += protocol->readMessageBegin(messageType);
-
-	if(!naxsoft::T_REPLY) {
-		printf("Wrong reply type %d", messageType);
-		x = -1;
-		y = -1;
-		z = -1;
-	} else {
-		rz += protocol->readI16(x);
-		rz += protocol->readI16(y);
-		rz += protocol->readI16(z);
-		rz += protocol->readMessageEnd();
-	}
-//	x = x >> 4;
-//	y = y >> 4;
-//	z = z >> 4;
-	return rz;
-}
-uint32_t readMagnetometer(naxsoft::Protocol* protocol, int16_t& x, int16_t& y, int16_t& z) {
-	uint32_t rz = 0;
-	rz += protocol->writeMessageBegin(naxsoft::T_CALL);
-	rz += protocol->writeI8(0x6); // 6=magnetometer
-	rz += protocol->writeMessageEnd();
-
-	enum naxsoft::TMessageType messageType;
-
-	rz += protocol->readMessageBegin(messageType);
-
-	if(!naxsoft::T_REPLY) {
-		printf("Wrong reply type %d", messageType);
-		x = -1;
-		y = -1;
-		z = -1;
-	} else {
-		rz += protocol->readI16(x);
-		rz += protocol->readI16(y);
-		rz += protocol->readI16(z);
-		rz += protocol->readMessageEnd();
-	}
-//	x = x >> 4;
-//	y = y >> 4;
-//	z = z >> 4;
-	return rz;
-}
 
 int main(int argc, char *argv[]) {
+
+	setbuf(stdout, NULL);
+
+//	naxsoft::Compass* compass = new naxsoft::Compass;
+
+
+	// 966.9 km										50° 3' 59.0004"   -5° 32' 3.0012"    58° 38' 38.0004"    -3° 4' 11.9994"
+	// printf("Distance %fkm\n", naxsoft::LatLon::calcDistance(50.06638888888889, -5.534166666666667, 58.64388888888889, -3.0700000000000003));
+	// 9.1175°									50° 3' 51.0006"     -5° 42' 52.9992"      58° 38' 38.0004"	-3° 4' 11.9994"
+	// printf("Bearing %f°\n", naxsoft::LatLon::getBearing(50.064166666666665, -5.714722222222222, 58.64388888888889, -3.0700000000000003));
+
+
+//	double decimalDegrees  = 50.064166666666665;
+//	naxsoft::dmsData dms;
+//	naxsoft::LatLon::decimalDegreesToDMS(decimalDegrees, &dms);
+//	printf("Decimal %f Equals Sexagesimal %d° %ld' %f\"\n", decimalDegrees, dms.degree, dms.min, dms.sec);
+
 	naxsoft::SerialTransport transport("/dev/cu.usbserial-A70041iS", B9600);
 	transport.open();
 
@@ -132,6 +75,8 @@ int main(int argc, char *argv[]) {
 	}
 
 	naxsoft::Protocol protocol(&transport);
+	naxsoft::SensorReader* sensorReader = new naxsoft::SensorReader(&protocol);
+	naxsoft::DataLogger* dataLogger = new naxsoft::DataLogger();
 
 	int16_t mx, my, mz = 0;
 	int16_t ax, ay, az = 0;
@@ -139,19 +84,13 @@ int main(int argc, char *argv[]) {
 
 	uint32_t rz = 0;
 
-	printf("#mx\tmy\tmz\tax\tay\taz\tgx\tgy\tgz\tms\n");
-
 	int i = 0;
-	for(;;) {
+	while(true) {
+		rz = sensorReader->readAccelerometer(&protocol, ax, ay, az);
+		rz = sensorReader->readGyro(&protocol, gx, gy, gz);
+		rz = sensorReader->readMagnetometer(&protocol, mx, my, mz);
+		dataLogger->log(mx, my, mz, ax, ay, az, gx, gy, gz, i);
 		i++;
-		rz = readAccelerometer(&protocol, ax, ay, az);
-		rz = readGyro(&protocol, gx, gy, gz);
-		rz = readMagnetometer(&protocol, mx, my, mz);
-		// printf("[%d][%d] accelerometer %d %d %d\n", i, rz, x, y, z);
-		printf("%04d\t%04d\t%04d\t%04d\t%04d\t%04d\t%05d\t%05d\t%05d\t%d\n", mx, my, mz, ax, ay, az, gx, gy, gz, i);
 	}
 	exit(EXIT_SUCCESS);
 } // end main
-
-
-
