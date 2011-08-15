@@ -39,6 +39,7 @@
 #include <termios.h>  /* POSIX terminal control definitions */
 #include <sys/ioctl.h>
 #include <getopt.h>
+#include <math.h>
 
 #include "thrift/Protocol.h"
 #include "thrift/SerialTransport.h"
@@ -50,7 +51,7 @@
 
 
 int main(int argc, char *argv[]) {
-
+	// To show logging in real-time, disable output buffering.
 	setbuf(stdout, NULL);
 
 //	naxsoft::Compass* compass = new naxsoft::Compass;
@@ -89,7 +90,10 @@ int main(int argc, char *argv[]) {
 		rz = sensorReader->readAccelerometer(&protocol, ax, ay, az);
 		rz = sensorReader->readGyro(&protocol, gx, gy, gz);
 		rz = sensorReader->readMagnetometer(&protocol, mx, my, mz);
+
 		dataLogger->log(mx, my, mz, ax, ay, az, gx, gy, gz, i);
+
+
 		i++;
 	}
 	exit(EXIT_SUCCESS);
