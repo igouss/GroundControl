@@ -33,6 +33,7 @@
 #include <cstdio>
 // for memmove():
 #include <cstring>
+#include <ext/stdio_filebuf.h>
 
 
 // low-level read and write functions
@@ -107,12 +108,21 @@ class FdOutBuf : public std::streambuf
     char buf[size];
 };
 
+
 class FdOStream : public std::ostream
 {
   public:
     explicit FdOStream(int fd) : std::ostream(&buf), buf(fd) {}
   private:
     FdOutBuf buf;
+
+//  public:
+//    explicit FdOStream(int fd) : std::ostream(&buf), buf(fd, std::ios::in) {}
+//  private:
+//    __gnu_cxx::stdio_filebuf<char> buf;
+
+
+
 };
 
 

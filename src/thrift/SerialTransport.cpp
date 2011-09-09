@@ -39,10 +39,12 @@ void SerialTransport::open(void) {
 
 void SerialTransport::close(void) {
 	if(fd != 0) {
-		::close(fd);
-		fd = 0;
+		// ::close(fd);
+
+		// The file descriptor will be automatically closed when the stdio_filebuf is closed/destroyed.
 		delete outStream;
 		delete inStream;
+		fd = 0;
 	}
 }
 
@@ -55,6 +57,9 @@ void SerialTransport::flush() const {
 }
 
 bool SerialTransport::peek() const {
+	if(!inStream->good() || inStream->eof()) {
+		inStream->clear();
+	}
 	return inStream->peek();
 }
 
@@ -79,11 +84,17 @@ int32_t SerialTransport::readAll(uint8_t* buf, uint32_t len) const {
 	uint32_t have = 0;
 	int32_t get = 0;
 
+	uint8_t tryCount = 0;
+
 	while (have < len) {
 		get = read(buf + have, len - have);
+		if(get == 0) {
+			usleep(10000);
+			if(++tryCount == 255) {
+				return -1;
+			}
+		}
 //		if(get < 0) {
-//			get = 0;
-//			// return get;
 //		}
 		have += get;
 	}

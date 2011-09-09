@@ -48,13 +48,11 @@
 #include "DataLogger.h"
 #include "LatLon.h"
 
-
-
 int main(int argc, char *argv[]) {
 	// To show logging in real-time, disable output buffering.
 	setbuf(stdout, NULL);
 
-//	naxsoft::Compass* compass = new naxsoft::Compass;
+	//	naxsoft::Compass* compass = new naxsoft::Compass;
 
 
 	// 966.9 km										50° 3' 59.0004"   -5° 32' 3.0012"    58° 38' 38.0004"    -3° 4' 11.9994"
@@ -63,15 +61,15 @@ int main(int argc, char *argv[]) {
 	// printf("Bearing %f°\n", naxsoft::LatLon::getBearing(50.064166666666665, -5.714722222222222, 58.64388888888889, -3.0700000000000003));
 
 
-//	double decimalDegrees  = 50.064166666666665;
-//	naxsoft::dmsData dms;
-//	naxsoft::LatLon::decimalDegreesToDMS(decimalDegrees, &dms);
-//	printf("Decimal %f Equals Sexagesimal %d° %ld' %f\"\n", decimalDegrees, dms.degree, dms.min, dms.sec);
+	//	double decimalDegrees  = 50.064166666666665;
+	//	naxsoft::dmsData dms;
+	//	naxsoft::LatLon::decimalDegreesToDMS(decimalDegrees, &dms);
+	//	printf("Decimal %f Equals Sexagesimal %d° %ld' %f\"\n", decimalDegrees, dms.degree, dms.min, dms.sec);
 
 	naxsoft::SerialTransport transport("/dev/cu.usbserial-A70041iS", B9600);
 	transport.open();
 
-	if(!transport.isOpen()) {
+	if (!transport.isOpen()) {
 		exit(EXIT_FAILURE);
 	}
 
@@ -86,13 +84,18 @@ int main(int argc, char *argv[]) {
 	uint32_t rz = 0;
 
 	int i = 0;
-	while(true) {
-		rz = sensorReader->readAccelerometer(&protocol, ax, ay, az);
-		rz = sensorReader->readGyro(&protocol, gx, gy, gz);
-		rz = sensorReader->readMagnetometer(&protocol, mx, my, mz);
+	while (true) {
+		do {
+			rz = sensorReader->readAccelerometer(&protocol, ax, ay, az);
+		} while (rz == 0);
+		do {
+			rz = sensorReader->readGyro(&protocol, gx, gy, gz);
+		} while (rz == 0);
+		do {
+			rz = sensorReader->readMagnetometer(&protocol, mx, my, mz);
+		} while (rz == 0);
 
 		dataLogger->log(mx, my, mz, ax, ay, az, gx, gy, gz, i);
-
 
 		i++;
 	}
