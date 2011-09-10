@@ -1,34 +1,3 @@
-/*
- * Arduino-serial
- * --------------
- *
- * A simple command-line example program showing how a computer can
- * communicate with an Arduino board. Works on any POSIX system (Mac/Unix/PC)
- *
- *
- * Compile with something like:
- * gcc -o arduino-serial arduino-serial.c
- *
- * Created 5 December 2006
- * Copyleft (c) 2006, Tod E. Kurt, tod@todbot.com
- * http://todbot.com/blog/
- *
- *
- * Updated 8 December 2006:
- *  Justin McBride discoevered B14400 & B28800 aren't in Linux's termios.h.
- *  I've included his patch, but commented out for now.  One really needs a
- *  real make system when doing cross-platform C and I wanted to avoid that
- *  for this little program. Those baudrates aren't used much anyway. :)
- *
- * Updated 26 December 2007:
- *  Added ability to specify a delay (so you can wait for Arduino Diecimila)
- *  Added ability to send a binary byte number
- *
- * Update 31 August 2008:
- *  Added patch to clean up odd baudrates from Andy at hexapodia.org
- *
- */
-
 #include <stdio.h>    /* Standard input/output definitions */
 #include <stdlib.h>
 #include <stdint.h>   /* Standard types */
@@ -44,9 +13,18 @@
 #include "thrift/Protocol.h"
 #include "thrift/SerialTransport.h"
 
+#include "sensors/Compass.h"
+#include "sensors/Accelerometer.h"
+#include "sensors/Gyroscope.h"
+
 #include "SensorReader.h"
 #include "DataLogger.h"
 #include "LatLon.h"
+
+
+naxsoft::Compass compass;
+naxsoft::Accelerometer accelerometer;
+naxsoft::Gyroscope gyro;
 
 int main(int argc, char *argv[]) {
 	// To show logging in real-time, disable output buffering.
@@ -83,21 +61,48 @@ int main(int argc, char *argv[]) {
 
 	uint32_t rz = 0;
 
+//	accelerometer.setScale(18.0 / 256.0, 18.0 / 256.0, 18.0 / 256.0);
+//	accelerometer.setOffset(300, 600, 4000);
+
 	int i = 0;
+
 	while (true) {
 		do {
-			rz = sensorReader->readAccelerometer(&protocol, ax, ay, az);
+			rz = sensorReader->readAccelerometer(ax, ay, az);
+			accelerometer.setAxis(ax, ay, az);
+			accelerometer.calibrate();
 		} while (rz == 0);
 		do {
-			rz = sensorReader->readGyro(&protocol, gx, gy, gz);
+			rz = sensorReader->readGyro(gx, gy, gz);
+			gyro.setAxis(gx, gy, gz);
+			gyro.calibrate();
 		} while (rz == 0);
 		do {
-			rz = sensorReader->readMagnetometer(&protocol, mx, my, mz);
+			rz = sensorReader->readMagnetometer(mx, my, mz);
+			compass.setAxis(mx, my, mz);
+			compass.calibrate();
 		} while (rz == 0);
 
-		dataLogger->log(mx, my, mz, ax, ay, az, gx, gy, gz, i);
+		dataLogger->log(mx, my, mz, accelerometer.getSurge(), accelerometer.getSway(), accelerometer.getHeave(), gyro.getPitch(), gyro.getYaw(), gyro.getRoll(), i);
+
+		//		printf("maxAcceleration = %f\n", accelerometer.maxAcceleration());
 
 		i++;
 	}
 	exit(EXIT_SUCCESS);
 } // end main
+
+//void calibrateAccelerometer(naxsoft::SensorReader* sensorReader) {
+//	int16_t sampleX[100];
+//	int16_t sampleY[100];
+//	int16_t sampleZ[100];
+//	uint32_t rz = 0;
+//
+//	for(int i = 0; i < 100; i++) {
+//		do {
+//			rz = sensorReader->readAccelerometer(sampleX[i], sampleY[i], sampleZ[i]);
+//		} while (rz == 0);
+//	}
+//}
+
+

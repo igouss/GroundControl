@@ -12,9 +12,9 @@ public:
 	SensorReader(naxsoft::Protocol* protocol);
 	virtual ~SensorReader();
 
-	uint32_t readAccelerometer(naxsoft::Protocol* protocol, int16_t& x, int16_t& y, int16_t& z);
-	uint32_t readGyro(naxsoft::Protocol* protocol, int16_t& x, int16_t& y, int16_t& z);
-	uint32_t readMagnetometer(naxsoft::Protocol* protocol, int16_t& x, int16_t& y, int16_t& z);
+	uint32_t readAccelerometer(int16_t& x, int16_t& y, int16_t& z);
+	uint32_t readGyro(int16_t& x, int16_t& y, int16_t& z);
+	uint32_t readMagnetometer(int16_t& x, int16_t& y, int16_t& z);
 private:
 	naxsoft::Protocol* protocol;
 };
