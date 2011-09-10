@@ -44,7 +44,11 @@ public:
      */
     void setScale(double x, double y, double z);
 
-	double maxAcceleration();
+	double getForceVector();
+	double getXangle(double forceVector);
+	double getYangle(double forceVector);
+
+
 	double xGravityForce(double angle);
 	double yGravityForce(double angle);
 	double zGravityForce(double angle);

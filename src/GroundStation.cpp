@@ -62,7 +62,7 @@ int main(int argc, char *argv[]) {
 	uint32_t rz = 0;
 
 //	accelerometer.setScale(18.0 / 256.0, 18.0 / 256.0, 18.0 / 256.0);
-//	accelerometer.setOffset(300, 600, 4000);
+	accelerometer.setOffset(14, 21, -2);
 
 	int i = 0;
 
@@ -83,7 +83,12 @@ int main(int argc, char *argv[]) {
 			compass.calibrate();
 		} while (rz == 0);
 
-		dataLogger->log(mx, my, mz, accelerometer.getSurge(), accelerometer.getSway(), accelerometer.getHeave(), gyro.getPitch(), gyro.getYaw(), gyro.getRoll(), i);
+		double r = accelerometer.getForceVector();
+		double accXangle = naxsoft::LatLon::radToDegrees(accelerometer.getXangle(r)); // when flat x & y are 90 deg to z
+		double accYangle = naxsoft::LatLon::radToDegrees(accelerometer.getYangle(r));
+
+		dataLogger->log(accXangle, accYangle, 0, accelerometer.getSurge(), accelerometer.getSway(), accelerometer.getHeave(), 0, 0, 0, i);
+//		dataLogger->log(mx, my, mz, accelerometer.getSurge(), accelerometer.getSway(), accelerometer.getHeave(), gyro.getPitch(), gyro.getYaw(), gyro.getRoll(), i);
 
 		//		printf("maxAcceleration = %f\n", accelerometer.maxAcceleration());
 

@@ -26,11 +26,19 @@ Accelerometer::~Accelerometer() {
 	// TODO Auto-generated destructor stub
 }
 
-double Accelerometer::maxAcceleration() {
+double Accelerometer::getForceVector() {
 	return sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2));
 }
 
-double Accelerometer::xGravityForce(double angle) {
+double Accelerometer::getXangle(double forceVector) {
+	return acos(x/forceVector);// * 57.295779513082320876798154814105;
+}
+
+double Accelerometer::getYangle(double forceVector) {
+	return acos(y/forceVector);// * 57.295779513082320876798154814105;
+}
+
+double Accelerometer::Accelerometer::xGravityForce(double angle) {
 	return -x * cos(angle);
 }
 double Accelerometer::yGravityForce(double angle) {
@@ -44,12 +52,12 @@ void Accelerometer::setAxis(double x, double y, double z) {
 	this->x = (x + offset_x) * scale_x;
 	this->y = (y + offset_y) * scale_y;
 	this->z = (z + offset_z) * scale_z;
-//    Estimator::estimate(this->x, 0.1, &x_mu_n, &x_sigma_sqr_n);
-//    Estimator::estimate(this->y, 0.1, &y_mu_n, &y_sigma_sqr_n);
-//    Estimator::estimate(this->z, 0.1, &z_mu_n, &z_sigma_sqr_n);
-//    this->x = x_mu_n;
-//    this->y = y_mu_n;
-//    this->z = z_mu_n;
+    Estimator::estimate(this->x, 0.9, &x_mu_n, &x_sigma_sqr_n);
+    Estimator::estimate(this->y, 0.9, &y_mu_n, &y_sigma_sqr_n);
+    Estimator::estimate(this->z, 0.8, &z_mu_n, &z_sigma_sqr_n);
+    this->x = x_mu_n;
+    this->y = y_mu_n;
+    this->z = z_mu_n;
 }
 
 void Accelerometer::setOffset(double x, double y, double z) {
