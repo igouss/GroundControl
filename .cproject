@@ -20,7 +20,7 @@
 					<folderInfo id="cdt.managedbuild.config.gnu.macosx.exe.debug.2112245315." name="/" resourcePath="">
 						<toolChain id="cdt.managedbuild.toolchain.gnu.macosx.exe.debug.539264940" name="MacOSX GCC" superClass="cdt.managedbuild.toolchain.gnu.macosx.exe.debug">
 							<targetPlatform id="cdt.managedbuild.target.gnu.platform.macosx.exe.debug.89477690" name="Debug Platform" superClass="cdt.managedbuild.target.gnu.platform.macosx.exe.debug"/>
-							<builder buildPath="${workspace_loc:/GroundStation/Debug}" id="cdt.managedbuild.target.gnu.builder.macosx.exe.debug.1941128001" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Gnu Make Builder" superClass="cdt.managedbuild.target.gnu.builder.macosx.exe.debug"/>
+							<builder buildPath="${workspace_loc:/GroundStation}" id="cdt.managedbuild.target.gnu.builder.macosx.exe.debug.1941128001" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" parallelBuildOn="true" parallelizationNumber="-1" superClass="cdt.managedbuild.target.gnu.builder.macosx.exe.debug"/>
 							<tool id="cdt.managedbuild.tool.macosx.c.linker.macosx.exe.debug.352734353" name="MacOS X C Linker" superClass="cdt.managedbuild.tool.macosx.c.linker.macosx.exe.debug"/>
 							<tool id="cdt.managedbuild.tool.macosx.cpp.linker.macosx.exe.debug.1923871245" name="MacOS X C++ Linker" superClass="cdt.managedbuild.tool.macosx.cpp.linker.macosx.exe.debug">
 								<inputType id="cdt.managedbuild.tool.macosx.cpp.linker.input.1210938925" superClass="cdt.managedbuild.tool.macosx.cpp.linker.input">
@@ -29,6 +29,9 @@
 								</inputType>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.assembler.macosx.exe.debug.889436400" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.macosx.exe.debug">
+								<option id="gnu.both.asm.option.include.paths.2801299" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="/Users/elendal/QtSDK/Desktop/Qt/474/gcc/include"/>
+								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1652027189" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.archiver.macosx.base.2135403817" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.macosx.base"/>
@@ -49,6 +52,9 @@
 					</sourceEntries>
 				</configuration>
 			</storageModule>
+			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
+			<storageModule moduleId="org.eclipse.cdt.core.language.mapping"/>
+			<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 			<storageModule moduleId="scannerConfiguration">
 				<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 				<profile id="de.innot.avreclipse.core.AVRGCCManagedMakePerProjectProfileC">
@@ -151,8 +157,8 @@
 						<parser enabled="true"/>
 					</scannerInfoProvider>
 				</profile>
-				<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.macosx.exe.release.1185285398;cdt.managedbuild.config.macosx.exe.release.1185285398.;cdt.managedbuild.tool.gnu.cpp.compiler.macosx.exe.release.1265740327;cdt.managedbuild.tool.gnu.cpp.compiler.input.78768430">
-					<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileCPP"/>
+				<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.macosx.exe.debug.2112245315;cdt.managedbuild.config.gnu.macosx.exe.debug.2112245315.;cdt.managedbuild.tool.gnu.c.compiler.macosx.exe.debug.1926174477;cdt.managedbuild.tool.gnu.c.compiler.input.647296944">
+					<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC"/>
 					<profile id="de.innot.avreclipse.core.AVRGCCManagedMakePerProjectProfileC">
 						<buildOutputProvider>
 							<openAction enabled="true" filePath=""/>
@@ -219,7 +225,7 @@
 							<parser enabled="true"/>
 						</buildOutputProvider>
 						<scannerInfoProvider id="specsFile">
-							<runAction arguments="-E -P -v -dD ${plugin_state_location}/specs.c" command="gcc" useDefault="true"/>
+							<runAction arguments="-O0 -E -P -v -dD ${plugin_state_location}/specs.c" command="gcc" useDefault="true"/>
 							<parser enabled="true"/>
 						</scannerInfoProvider>
 					</profile>
@@ -254,8 +260,8 @@
 						</scannerInfoProvider>
 					</profile>
 				</scannerConfigBuildInfo>
-				<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.macosx.exe.debug.2112245315;cdt.managedbuild.config.gnu.macosx.exe.debug.2112245315.;cdt.managedbuild.tool.gnu.c.compiler.macosx.exe.debug.1926174477;cdt.managedbuild.tool.gnu.c.compiler.input.647296944">
-					<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC"/>
+				<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.macosx.exe.release.1185285398;cdt.managedbuild.config.macosx.exe.release.1185285398.;cdt.managedbuild.tool.gnu.cpp.compiler.macosx.exe.release.1265740327;cdt.managedbuild.tool.gnu.cpp.compiler.input.78768430">
+					<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileCPP"/>
 					<profile id="de.innot.avreclipse.core.AVRGCCManagedMakePerProjectProfileC">
 						<buildOutputProvider>
 							<openAction enabled="true" filePath=""/>
@@ -415,7 +421,7 @@
 							<parser enabled="true"/>
 						</buildOutputProvider>
 						<scannerInfoProvider id="specsFile">
-							<runAction arguments="-E -P -v -dD ${plugin_state_location}/specs.cpp" command="g++" useDefault="true"/>
+							<runAction arguments="-O0 -E -P -v -dD ${plugin_state_location}/specs.cpp" command="g++" useDefault="true"/>
 							<parser enabled="true"/>
 						</scannerInfoProvider>
 					</profile>
@@ -564,9 +570,6 @@
 					</profile>
 				</scannerConfigBuildInfo>
 			</storageModule>
-			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
-			<storageModule moduleId="org.eclipse.cdt.core.language.mapping"/>
-			<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 		</cconfiguration>
 		<cconfiguration id="cdt.managedbuild.config.macosx.exe.release.1185285398">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.macosx.exe.release.1185285398" moduleId="org.eclipse.cdt.core.settings" name="Release">
@@ -614,6 +617,9 @@
 					</sourceEntries>
 				</configuration>
 			</storageModule>
+			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
+			<storageModule moduleId="org.eclipse.cdt.core.language.mapping"/>
+			<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 			<storageModule moduleId="scannerConfiguration">
 				<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 				<profile id="de.innot.avreclipse.core.AVRGCCManagedMakePerProjectProfileC">
@@ -716,8 +722,8 @@
 						<parser enabled="true"/>
 					</scannerInfoProvider>
 				</profile>
-				<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.macosx.exe.release.1185285398;cdt.managedbuild.config.macosx.exe.release.1185285398.;cdt.managedbuild.tool.gnu.cpp.compiler.macosx.exe.release.1265740327;cdt.managedbuild.tool.gnu.cpp.compiler.input.78768430">
-					<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileCPP"/>
+				<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.macosx.exe.debug.2112245315;cdt.managedbuild.config.gnu.macosx.exe.debug.2112245315.;cdt.managedbuild.tool.gnu.c.compiler.macosx.exe.debug.1926174477;cdt.managedbuild.tool.gnu.c.compiler.input.647296944">
+					<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC"/>
 					<profile id="de.innot.avreclipse.core.AVRGCCManagedMakePerProjectProfileC">
 						<buildOutputProvider>
 							<openAction enabled="true" filePath=""/>
@@ -784,7 +790,7 @@
 							<parser enabled="true"/>
 						</buildOutputProvider>
 						<scannerInfoProvider id="specsFile">
-							<runAction arguments="-E -P -v -dD ${plugin_state_location}/specs.c" command="gcc" useDefault="true"/>
+							<runAction arguments="-O0 -E -P -v -dD ${plugin_state_location}/specs.c" command="gcc" useDefault="true"/>
 							<parser enabled="true"/>
 						</scannerInfoProvider>
 					</profile>
@@ -819,8 +825,8 @@
 						</scannerInfoProvider>
 					</profile>
 				</scannerConfigBuildInfo>
-				<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.macosx.exe.debug.2112245315;cdt.managedbuild.config.gnu.macosx.exe.debug.2112245315.;cdt.managedbuild.tool.gnu.c.compiler.macosx.exe.debug.1926174477;cdt.managedbuild.tool.gnu.c.compiler.input.647296944">
-					<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC"/>
+				<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.macosx.exe.release.1185285398;cdt.managedbuild.config.macosx.exe.release.1185285398.;cdt.managedbuild.tool.gnu.cpp.compiler.macosx.exe.release.1265740327;cdt.managedbuild.tool.gnu.cpp.compiler.input.78768430">
+					<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileCPP"/>
 					<profile id="de.innot.avreclipse.core.AVRGCCManagedMakePerProjectProfileC">
 						<buildOutputProvider>
 							<openAction enabled="true" filePath=""/>
@@ -980,7 +986,7 @@
 							<parser enabled="true"/>
 						</buildOutputProvider>
 						<scannerInfoProvider id="specsFile">
-							<runAction arguments="-E -P -v -dD ${plugin_state_location}/specs.cpp" command="g++" useDefault="true"/>
+							<runAction arguments="-O0 -E -P -v -dD ${plugin_state_location}/specs.cpp" command="g++" useDefault="true"/>
 							<parser enabled="true"/>
 						</scannerInfoProvider>
 					</profile>
@@ -1129,9 +1135,6 @@
 					</profile>
 				</scannerConfigBuildInfo>
 			</storageModule>
-			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
-			<storageModule moduleId="org.eclipse.cdt.core.language.mapping"/>
-			<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">

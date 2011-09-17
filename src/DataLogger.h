@@ -10,7 +10,7 @@ public:
 	DataLogger();
 	virtual ~DataLogger();
 
-	void log(int16_t mx, int16_t my, int16_t mz, int16_t ax, int16_t ay, int16_t az, int16_t gx, int16_t gy, int16_t gz, int i);
+	void log(double mx, double my, double mz, double ax, double ay, double az, double gx, double gy, double gz, int i);
 };
 
 } // namespace

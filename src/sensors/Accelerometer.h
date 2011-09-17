@@ -14,7 +14,7 @@ public:
      * @param y is the y axis
      * @param z is the z axis
      */
-    void setAxis(double x, double y, double z);
+    void setAxis(int16_t x, int16_t y, int16_t z);
 
     /** sets the x, y, and z offset corrections for hard iron calibration
      *
@@ -29,7 +29,7 @@ public:
      * @param y is the offset correction for the y axis
      * @param z is the offset correction for the z axis
      */
-    void setOffset(double x, double y, double z);
+    void setOffset(int16_t x, int16_t y, int16_t z);
 
     /**
      * sets the scale factor for the x, y, and z axes
@@ -55,50 +55,51 @@ public:
 
 	/**
 	 * the linear vertical (up/down) motion
+	 * Unit: g-force
 	 */
-	int getSurge(void)
-	{
-		return x;
-	}
+	double getSurge(void);
 
 	/**
 	 * the linear lateral (side-to-side) motion
+	 * Unit: g-force
 	 */
-	int getSway(void)
-	{
-		return y;
-	}
+	double getSway(void);
 
 	/**
 	 * the linear longitudinal (front/back) motion
+	 * Unit: g-force
 	 */
-	int getHeave(void)
-	{
-		return z;
-	}
+	double getHeave(void);
 
+	/**
+	 * the linear vertical (up/down) motion
+     * Unit: Metre per second squared
+	 */
+	double getMetricSurge(void);
 
+	/**
+	 * the linear lateral (side-to-side) motion
+     * Unit: Metre per second squared
+	 */
+	double getMetricSway(void);
 
-	void calibrate();
+	/**
+	 * the linear longitudinal (front/back) motion
+     * Unit: Metre per second squared
+	 */
+	double getMetricHeave(void);
+
 private:
-    double x;
-    double y;
-    double z;
+	double x;
+	double y;
+	double z;
 
-    double offset_x;
-    double offset_y;
-    double offset_z;
+    int16_t offset_x;
+    int16_t offset_y;
+    int16_t offset_z;
     double scale_x;
     double scale_y;
     double scale_z;
-
-	// calibration
-	double max_x;
-	double max_y;
-	double max_z;
-	double min_x;
-	double min_y;
-	double min_z;
 
 	// filtering/smoothing
     double x_mu_n;

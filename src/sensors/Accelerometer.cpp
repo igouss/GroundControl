@@ -48,19 +48,19 @@ double Accelerometer::zGravityForce(double angle) {
 	return -z * cos(angle);
 }
 
-void Accelerometer::setAxis(double x, double y, double z) {
+void Accelerometer::setAxis(int16_t x, int16_t y, int16_t z) {
 	this->x = (x + offset_x) * scale_x;
 	this->y = (y + offset_y) * scale_y;
 	this->z = (z + offset_z) * scale_z;
-    Estimator::estimate(this->x, 0.9, &x_mu_n, &x_sigma_sqr_n);
-    Estimator::estimate(this->y, 0.9, &y_mu_n, &y_sigma_sqr_n);
-    Estimator::estimate(this->z, 0.8, &z_mu_n, &z_sigma_sqr_n);
+    Estimator::estimate(this->x, 0.1, &x_mu_n, &x_sigma_sqr_n);
+    Estimator::estimate(this->y, 0.1, &y_mu_n, &y_sigma_sqr_n);
+    Estimator::estimate(this->z, 0.1, &z_mu_n, &z_sigma_sqr_n);
     this->x = x_mu_n;
     this->y = y_mu_n;
     this->z = z_mu_n;
 }
 
-void Accelerometer::setOffset(double x, double y, double z) {
+void Accelerometer::setOffset(int16_t x, int16_t y, int16_t z) {
 	offset_x = x;
 	offset_y = y;
 	offset_z = z;
@@ -72,16 +72,57 @@ void Accelerometer::setScale(double x, double y, double z) {
 	scale_z = z;
 }
 
-void Accelerometer::calibrate() {
-	// set magnetometer max and min:
-	if (x > max_x) max_x = x;
-	if (x < min_x) min_x = x;
+/**
+ * the linear vertical (up/down) motion
+ * Unit: g-force
+ */
+double Accelerometer::getSurge(void)
+{
+	return z;
+}
 
-	if (y > max_y) max_y = y;
-	if (y < min_y) min_y = y;
+/**
+ * the linear lateral (side-to-side) motion
+ * Unit: g-force
+ */
+double Accelerometer::getSway(void)
+{
+	return x;
+}
 
-	if (z > max_z) max_z = z;
-	if (z < min_z) min_z = z;
+/**
+ * the linear longitudinal (front/back) motion
+ * Unit: g-force
+ */
+double Accelerometer::getHeave(void)
+{
+	return y;
+}
+/**
+ * the linear vertical (up/down) motion
+ * Unit: Metre per second squared
+ */
+double Accelerometer::getMetricSurge(void)
+{
+	return z * 9.80665;
+}
+
+/**
+ * the linear lateral (side-to-side) motion
+ * Unit: Metre per second squared
+ */
+double Accelerometer::getMetricSway(void)
+{
+	return x * 9.80665;
+}
+
+/**
+ * the linear longitudinal (front/back) motion
+ * Unit: Metre per second squared
+ */
+double Accelerometer::getMetricHeave(void)
+{
+	return y * 9.80665;
 }
 
 

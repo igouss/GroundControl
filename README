@@ -1,1 +1,5 @@
 Robot control & monitiring software
+
+http://doc.qt.nokia.com/latest/qmake-running.html
+
+Calibrate gyroscope & accelerometer to zero-g and zero-rate level

@@ -12,8 +12,9 @@ DataLogger::~DataLogger() {
 	// TODO Auto-generated destructor stub
 }
 
-void DataLogger::log(int16_t mx, int16_t my, int16_t mz, int16_t ax, int16_t ay, int16_t az, int16_t gx, int16_t gy, int16_t gz, int i) {
-	printf("%04d\t%04d\t%04d\t%04d\t%04d\t%04d\t%05d\t%05d\t%05d\t%d\n", mx, my, mz, ax, ay, az, gx, gy, gz, i);
+void DataLogger::log(double mx, double my, double mz, double ax, double ay, double az, double gx, double gy, double gz, int i) {
+//	printf("%04f\t%04f\t%04f\t%04f\t%04f\t%04f\t%05f\t%04f\t%04f\t%d\n", mx, my, mz, ax, ay, az, gx, gy, gz, i);
+	printf("%04.2f\t%04.2f\t%04.2f\t%04.2f\t%04.2f\t%04.2f\t%04.2f\t%04.2f\t%04.2f\t%d\n", mx, my, mz, ax, ay, az, gx, gy, gz, i);
 
 //	printf("0:%04d\n", mx);
 //	printf("1:%04d\n", my);

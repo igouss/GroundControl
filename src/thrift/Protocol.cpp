@@ -7,17 +7,23 @@ namespace naxsoft {
 
 //#define NDEBUG
 
+static uint16_t seqId = 0;
+
 Protocol::Protocol(SerialTransport const* const transport) :
 	trans_(transport) {
+}
+uint16_t Protocol::getNextSeqId() {
+	return (++seqId);
 }
 
 /**
  * Writing functions.
  */
 uint32_t Protocol::writeMessageBegin(
-		/*const char* name, */const TMessageType messageType /*, const int32_t seqid*/) const {
+		/*const char* name, */const TMessageType messageType, const uint16_t seqid) const {
 	uint32_t wsize = 0;
 	//    wsize += writeString(name);
+	wsize += writeI16((int16_t)seqid);
 	wsize += writeI8((int8_t) messageType);
 	//    wsize += writeI32(seqid);
 	return wsize;
@@ -153,15 +159,14 @@ uint32_t Protocol::writeBinary(const char* str, const uint32_t size) const {
 /**
  * Reading functions
  */
-uint32_t Protocol::readMessageBegin(/*char* name,*/
-TMessageType& messageType
-/*, int32_t& seqid*/) const {
+uint32_t Protocol::readMessageBegin(/*char* name,*/ TMessageType& messageType, uint16_t& seqid) const {
 	uint32_t result = 0;
 	int8_t type;
 
 	//  int32_t sz;
 	//  result += readI32(sz);
 	//  result += readStringBody(name, sz);
+	result += readI16((int16_t&)seqid);
 	result += readI8(type);
 	messageType = (TMessageType) type;
 	//  result += readI32(seqid);

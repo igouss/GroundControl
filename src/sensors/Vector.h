@@ -3,7 +3,7 @@
 
 namespace naxsoft {
 
-typedef struct vector
+typedef struct
 {
   double x, y, z;
 } vector;

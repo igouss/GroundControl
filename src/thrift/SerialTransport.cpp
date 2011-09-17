@@ -1,5 +1,11 @@
+#include <fstream>
 #include <iostream>
 #include <streambuf>
+#include <fcntl.h>
+#include <cstdio>
+#include <termios.h>
+#include <cassert>
+
 
 #include <locale>
 #include <cstdio>
@@ -14,6 +20,8 @@
 #include <sys/ioctl.h>
 
 #include "SerialTransport.h"
+//#include "../serial/SerialStreamBuf.h"
+
 
 namespace naxsoft {
 
@@ -57,10 +65,11 @@ void SerialTransport::flush() const {
 }
 
 bool SerialTransport::peek() const {
-	if(!inStream->good() || inStream->eof()) {
-		inStream->clear();
-	}
-	return inStream->peek();
+	return true;
+//	if(!inStream->good() || inStream->eof()) {
+//		inStream->clear();
+//	}
+//	return inStream->peek();
 }
 
 int32_t SerialTransport::read(uint8_t* buf, uint32_t len) const {
@@ -94,8 +103,6 @@ int32_t SerialTransport::readAll(uint8_t* buf, uint32_t len) const {
 				return -1;
 			}
 		}
-//		if(get < 0) {
-//		}
 		have += get;
 	}
 
@@ -203,3 +210,6 @@ int SerialTransport::serialport_init(const char* serialport, int baud) {
 	return fd;
 }
 } // namespace
+
+
+

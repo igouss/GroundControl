@@ -1,3 +1,7 @@
 Debug
 out.txt
 *~
+*.o
+GroundStation.app
+moc_*
+.DS_Store

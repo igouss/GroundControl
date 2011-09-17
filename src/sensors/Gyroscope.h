@@ -5,6 +5,28 @@
 
 namespace naxsoft {
 
+
+/**
+ *              +z yaw
+ *               |
+ *               |      +y roll
+ *               |     /
+ *               |----/----
+ *              /| NOKIA  /|
+ *             //|--/--- / |
+ *            // | /   //  /
+ *           //  |/   //  /
+ *          //   '--------------- +x pitch
+ *         //       //  /
+ *        //       //  /
+ *       /---------/  /
+ *      /    O    /  /
+ *     /         /  /
+ *     ----------  /
+ *     |_________!/
+ *
+ */
+
 class Gyroscope {
 public:
 	Gyroscope();
@@ -15,7 +37,7 @@ public:
 	 * @param y is the y axis
 	 * @param z is the z axis
 	 */
-	void setAxis(double x, double y, double z);
+	void setAxis(int16_t x, int16_t y, int16_t z);
 
 	/** sets the x, y, and z offset corrections
 	 *
@@ -35,8 +57,6 @@ public:
 	double getPitch();
 	double getYaw();
 	double getRoll();
-
-	void calibrate();
 
 private:
 	double x;

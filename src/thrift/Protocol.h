@@ -44,12 +44,14 @@ namespace naxsoft {
       public:
         Protocol(SerialTransport const* const transport);
 
+        uint16_t getNextSeqId();
+
         /**
          * Writing functions.
          */
         uint32_t writeMessageBegin(/*const char* name,*/
                                    const TMessageType messageType
-                                   /*,const int32_t seqid*/) const;
+                                   ,const uint16_t seqid) const;
 
         uint32_t writeMessageEnd() const;
 
@@ -101,7 +103,7 @@ namespace naxsoft {
          */
         uint32_t readMessageBegin(/*char* name,*/
                                   TMessageType& messageType
-                                  /*,int32_t& seqid */) const;
+                                  ,uint16_t& seqid) const;
 
         uint32_t readMessageEnd() const;
 
